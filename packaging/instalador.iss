@@ -7,7 +7,7 @@
 ; Genera dist\ArqueoCAD-<version>-windows-x64.exe
 
 #define NombreApp "ArqueoCAD"
-#define Version "0.1.0"
+#define Version "0.2.0"
 #define Autor "José Javier Martínez García"
 #define Web "http://josejaviermartinez.com/"
 #define Ejecutable "ArqueoCAD.exe"

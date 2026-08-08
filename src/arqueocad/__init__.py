@@ -18,5 +18,5 @@ geometría ni la escala.
 # Debería haber recibido una copia de la Licencia junto con este programa. Si no
 # es así, véase <https://www.gnu.org/licenses/>.
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = ["__version__"]

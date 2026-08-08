@@ -221,6 +221,15 @@ class VentanaPrincipal(QMainWindow):
         menu_ver.addAction(self._accion_medir)
         barra.addAction(self._accion_medir)
 
+        vectorizar = QAction(t("&Vectorizar imagen…"), self)
+        vectorizar.setShortcut("Ctrl+I")
+        vectorizar.setToolTip(
+            t("Convierte un plano escaneado o fotografiado en geometría.")
+        )
+        vectorizar.triggered.connect(self._vectorizar_imagen)
+        menu_archivo.insertAction(self._accion_separar, vectorizar)
+        barra.addAction(vectorizar)
+
         self._accion_lotes = QAction(t("Separar por &lotes…"), self)
         self._accion_lotes.setShortcut("Ctrl+L")
         self._accion_lotes.setToolTip(
@@ -402,6 +411,31 @@ class VentanaPrincipal(QMainWindow):
 
     def _separar_lotes(self) -> None:
         DialogoLotes(self).exec()
+
+    # -- vectorización ---------------------------------------------------
+
+    def _vectorizar_imagen(self) -> None:
+        from ..io.lector import EXTENSIONES_IMAGEN
+        from .dialogo_vectorizar import DialogoVectorizar
+
+        patron = " ".join(f"*{e}" for e in EXTENSIONES_IMAGEN)
+        ruta, _ = QFileDialog.getOpenFileName(
+            self,
+            t("Vectorizar imagen"),
+            "",
+            f"{t('Imágenes')} ({patron});;{t('Todos los archivos (*)')}",
+        )
+        if not ruta:
+            return
+
+        try:
+            dialogo = DialogoVectorizar(Path(ruta), self)
+        except Exception as exc:  # noqa: BLE001
+            QMessageBox.critical(self, t("No se ha podido abrir la imagen"), str(exc))
+            return
+
+        if dialogo.exec() and dialogo.documento is not None:
+            self._al_cargar(dialogo.documento)
 
     # -- idioma ----------------------------------------------------------
 

@@ -238,6 +238,51 @@ este—, que es la que interesa para orientar un muro. Si el plano no declara su
 unidades, las medidas se dan en unidades de dibujo y así se indica: presentar
 «12,4 m» sobre un plano de escala desconocida sería inventar un dato.
 
+## Vectorización de imágenes
+
+`Archivo › Vectorizar imagen` (Ctrl+I) convierte un plano escaneado o
+fotografiado en geometría, y a partir de ahí se comporta como cualquier otro
+plano: se separa por capas y se exporta a DXF o SVG.
+
+Aquí ArqueoCAD **deja de traducir y empieza a interpretar**. Un DXF dice
+exactamente dónde empieza y acaba cada línea; una imagen es una rejilla de
+puntos de la que hay que deducir los trazos, y toda deducción se equivoca a
+veces. El resultado siempre hay que revisarlo, y el programa lo advierte.
+
+El recorrido es: corregir la iluminación desigual → binarizar → limpiar motas →
+**adelgazar el trazo a un píxel** → seguir los caminos → simplificar → repartir
+en capas.
+
+El adelgazado es lo que distingue esta vectorización de la habitual: sin él,
+cada línea del dibujo saldría como **dos líneas paralelas** —los dos bordes de
+su trazo—, que es el error clásico de vectorizar por contornos.
+
+### Tres trampas encontradas
+
+- **Los falsos cruces trocean las rectas.** El adelgazado deja píxeles con tres
+  vecinos en cada escalón diagonal; tomarlos por bifurcaciones partía una recta
+  en cientos de fragmentos de dos píxeles. Se descartan las conexiones
+  diagonales redundantes.
+- **Las coordenadas llegan transpuestas.** NumPy recorre una imagen en (fila,
+  columna); tratarlas como (x, y) gira el plano entero sin que nada falle de
+  forma visible. Solo lo detecta una comparación numérica contra un original
+  conocido.
+- **Sin calibrar no hay medidas.** Una imagen no tiene escala. Marcando dos
+  puntos de distancia conocida —lo natural es la escala gráfica del plano— el
+  resultado pasa a estar en metros.
+
+### Qué no puede hacer
+
+**No distingue significados.** Separa por color o por grosor de trazo, nunca
+entre un muro y una cota si están dibujados igual. El **texto se vectoriza como
+dibujo**: los rótulos dejan de ser texto. Y la calidad depende por completo del
+original: un escaneado a 300 ppp da buen resultado, una fotografía con sombras
+da bastante ruido.
+
+El adelgazado (Zhang-Suen) está implementado en `io/vectorizador.py` en lugar de
+usar el de los módulos adicionales de OpenCV: eran 60 MB más de instalador para
+una sola función.
+
 ## Idiomas
 
 La interfaz está en **español e inglés**, y se cambia en `Ver › Idioma`. La

@@ -58,7 +58,7 @@ analisis = Analysis(
     # El icono viaja como dato además de incrustarse en el ejecutable: la
     # ventana y el cuadro «Acerca de» lo cargan en tiempo de ejecución.
     datas=[(str(RAIZ / "packaging" / "arqueocad.png"), ".")],
-    hiddenimports=["arqueocad.ui", "arqueocad.io", "arqueocad.core"],
+    hiddenimports=["arqueocad.ui", "arqueocad.io", "arqueocad.core", "cv2"],
     hookspath=[],
     runtime_hooks=[],
     excludes=QT_SOBRANTE + OTROS_SOBRANTES,
@@ -73,6 +73,9 @@ analisis = Analysis(
 #:   QPainter sobre el motor raster y nunca lo pide.
 #: - Quick y QML son el motor declarativo de interfaces; aquí todo es QtWidgets.
 BINARIOS_SOBRANTES = (
+    # Códecs de vídeo de OpenCV: casi 30 MB para leer películas, algo que esta
+    # aplicación no hace. Las imágenes fijas no pasan por ellos.
+    "opencv_videoio_ffmpeg",
     "opengl32sw",
     "qt6quick",
     "qt6qml",

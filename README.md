@@ -13,6 +13,7 @@ Pensado para planimetría de excavación.
 ## Qué hace
 
 - Abre planos de AutoCAD (DXF y DWG) y dibujos vectoriales (SVG).
+- **Vectoriza planos escaneados o fotografiados**, con calibración de escala.
 - Muestra las capas con su color, su contenido y un filtro por nombre.
 - **Separa el plano en un archivo por capa**, en DXF para seguir trabajando en
   CAD o en SVG con capas de Inkscape para la figura de publicación.

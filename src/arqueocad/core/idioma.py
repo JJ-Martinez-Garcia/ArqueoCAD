@@ -11,6 +11,19 @@ después de traducir, porque el orden de las palabras cambia entre idiomas:
     t("{n} capas seleccionadas").format(n=17)
 """
 
+# Parte de ArqueoCAD. Copyright (C) 2026 José Javier Martínez García
+#
+# Este programa es software libre: puede redistribuirlo y modificarlo bajo los
+# términos de la Licencia Pública General de GNU publicada por la Free Software
+# Foundation, en su versión 3.
+#
+# Se distribuye con la esperanza de que resulte útil, pero SIN NINGUNA GARANTÍA;
+# ni siquiera la garantía implícita de COMERCIABILIDAD o IDONEIDAD PARA UN FIN
+# DETERMINADO. Consulte la Licencia Pública General de GNU para más detalles.
+#
+# Debería haber recibido una copia de la Licencia junto con este programa. Si no
+# es así, véase <https://www.gnu.org/licenses/>.
+
 from __future__ import annotations
 
 #: Idiomas admitidos, con su nombre en su propia lengua.
@@ -155,6 +168,51 @@ CATALOGO: dict[str, str] = {
     "{correctos} de {total} planos procesados": "{correctos} of {total} drawings processed",
     "{n} archivos generados": "{n} files created",
     "{n} con errores": "{n} with errors",
+    # -- vectorización ----------------------------------------------------
+    "&Vectorizar imagen…": "&Vectorise image…",
+    "Vectorizar imagen": "Vectorise image",
+    "Vectorizar": "Vectorise",
+    "Vectorizando…": "Vectorising…",
+    "Cancelar": "Cancel",
+    "Imágenes": "Images",
+    "Convierte un plano escaneado o fotografiado en geometría.":
+        "Turns a scanned or photographed drawing into geometry.",
+    "No se ha podido abrir la imagen": "The image could not be opened",
+    "Sin imagen": "No image",
+    "Detección del trazo": "Stroke detection",
+    "Umbral automático": "Automatic threshold",
+    "Umbral:": "Threshold:",
+    "Corregir la iluminación desigual": "Correct uneven lighting",
+    "Imprescindible en fotografías: sin esto, un umbral único "
+    "ennegrece la zona más oscura y blanquea la contraria.":
+        "Essential for photographs: without it, a single threshold blackens "
+        "the darker area and washes out the other.",
+    "El dibujo es claro sobre fondo oscuro": "The drawing is light on a dark background",
+    "Manchas menores que:": "Blobs smaller than:",
+    "Simplificación:": "Simplification:",
+    "Subirla da archivos más ligeros a costa de redondear las esquinas.":
+        "Raising it gives lighter files at the cost of rounding corners.",
+    "Una sola capa": "A single layer",
+    "Por grosor del trazo": "By stroke width",
+    "Por color del trazo": "By stroke colour",
+    "La separación es gráfica, no de significado: no puede distinguir "
+    "un muro de una cota si están dibujados igual.":
+        "The split is graphical, not semantic: it cannot tell a wall from a "
+        "spot height if they are drawn alike.",
+    "Escala": "Scale",
+    "Marcar dos puntos…": "Mark two points…",
+    "Lo natural es marcar los extremos de la escala gráfica del plano.":
+        "The natural choice is the ends of the drawing's own scale bar.",
+    "Distancia real:": "Actual distance:",
+    "Unidad:": "Unit:",
+    "Sin calibrar, el resultado sale en píxeles y no sirve para medir.":
+        "Without calibration the result is in pixels and cannot be measured.",
+    "Marque dos puntos de distancia conocida sobre la imagen.":
+        "Mark two points of known distance on the image.",
+    "Marque el segundo punto.": "Mark the second point.",
+    "Calibrado: {v} unidades de dibujo por píxel.":
+        "Calibrated: {v} drawing units per pixel.",
+    "Trazo detectado: {pct} % de la imagen": "Stroke detected: {pct} % of the image",
     # -- medición ---------------------------------------------------------
     "Medición: marque el primer punto": "Measurement: mark the first point",
     "Medición: marque el segundo punto": "Measurement: mark the second point",

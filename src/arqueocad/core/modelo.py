@@ -54,6 +54,9 @@ class FormatoOrigen(str, Enum):
     DXF = "dxf"
     DWG = "dwg"
     SVG = "svg"
+    #: Imagen vectorizada. A diferencia del resto, su geometría no se ha leído
+    #: sino deducido, de modo que siempre conviene revisarla.
+    RASTER = "raster"
 
 
 @dataclass(slots=True)

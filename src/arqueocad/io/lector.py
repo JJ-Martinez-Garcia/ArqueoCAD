@@ -25,8 +25,17 @@ from pathlib import Path
 from ..core.geometria import TOLERANCIA_POR_DEFECTO
 from ..core.modelo import Documento
 
-#: Extensiones admitidas, para los diálogos de apertura y el arrastrar y soltar.
+#: Extensiones vectoriales, que se leen sin intervención del usuario.
 EXTENSIONES = (".dxf", ".svg", ".dwg")
+
+#: Imágenes que pueden vectorizarse. No se abren con `leer`: la vectorización
+#: exige ajustar el umbral y calibrar la escala, de modo que pasa por su propio
+#: diálogo.
+EXTENSIONES_IMAGEN = (".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".webp")
+
+
+def es_imagen(ruta: str | Path) -> bool:
+    return Path(ruta).suffix.casefold() in EXTENSIONES_IMAGEN
 
 
 class FormatoNoAdmitido(Exception):
@@ -50,9 +59,16 @@ def leer(ruta: str | Path, tolerancia: float = TOLERANCIA_POR_DEFECTO) -> Docume
     if sufijo == ".dwg":
         return _leer_dwg(ruta, tolerancia)
 
+    if es_imagen(ruta):
+        raise FormatoNoAdmitido(
+            "Las imágenes se abren con «Archivo › Vectorizar imagen…».\n\n"
+            "A diferencia de un plano vectorial, una imagen hay que interpretarla: "
+            "es necesario ajustar la detección del trazo y calibrar la escala."
+        )
+
     raise FormatoNoAdmitido(
         f"ArqueoCAD no reconoce la extensión «{ruta.suffix}».\n\n"
-        "Formatos admitidos: DXF, SVG y DWG."
+        "Formatos admitidos: DXF, SVG, DWG e imágenes para vectorizar."
     )
 
 

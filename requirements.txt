@@ -7,3 +7,9 @@
 ezdxf>=1.3          # MIT      — lectura y escritura DXF, exportación SVG/PDF/PNG
 PySide6>=6.7        # LGPL-3.0 — interfaz y visor (Qt 6 oficial)
 svgelements>=1.9    # MIT      — análisis de SVG con transformaciones y estilos
+
+# Vectorización de imágenes. La variante «headless» evita arrastrar un segundo
+# juego de bibliotecas gráficas junto al de Qt. Se evita la variante «contrib»,
+# 60 MB mayor, de la que solo se usaba el adelgazado de trazo: está
+# implementado en `io/vectorizador.py` y cubierto por sus pruebas.
+opencv-python-headless>=4.10   # Apache-2.0
