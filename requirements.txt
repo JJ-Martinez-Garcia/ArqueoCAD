@@ -1,0 +1,9 @@
+# ArqueoCAD — dependencias de ejecución
+#
+# Las licencias importan aquí: la aplicación se distribuye desde una web
+# pública, de modo que solo se admiten bibliotecas cuya licencia lo permita sin
+# obligar a liberar el código de ArqueoCAD.
+
+ezdxf>=1.3          # MIT      — lectura y escritura DXF, exportación SVG/PDF/PNG
+PySide6>=6.7        # LGPL-3.0 — interfaz y visor (Qt 6 oficial)
+svgelements>=1.9    # MIT      — análisis de SVG con transformaciones y estilos

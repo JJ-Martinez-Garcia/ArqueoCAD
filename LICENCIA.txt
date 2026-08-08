@@ -1,0 +1,67 @@
+ArqueoCAD
+Copyright (C) 2026 José Javier Martínez García
+
+Este programa es software libre: puede redistribuirlo y modificarlo bajo los
+términos de la Licencia Pública General de GNU publicada por la Free Software
+Foundation, en su versión 3.
+
+Se distribuye con la esperanza de que resulte útil, pero SIN NINGUNA GARANTÍA;
+ni siquiera la garantía implícita de COMERCIABILIDAD o IDONEIDAD PARA UN FIN
+DETERMINADO. Consulte la Licencia Pública General de GNU para más detalles.
+
+Debería haber recibido una copia de la Licencia junto con este programa, en el
+archivo licencias/GPL-3.0.txt. Si no es así, véase <https://www.gnu.org/licenses/>.
+
+Código fuente: https://github.com/JJ-Martinez-Garcia/ArqueoCAD
+
+
+QUÉ SIGNIFICA EN LA PRÁCTICA
+--------------------------------------------------------------------------------
+
+El programa es libre y gratuito. Puede usarse para cualquier fin, copiarse,
+estudiarse y modificarse sin pedir permiso ni pagar nada.
+
+La única condición es que quien distribuya una versión modificada publique
+también su código fuente bajo esta misma licencia. Es decir: nadie puede tomar
+ArqueoCAD, cerrarlo y distribuirlo como programa propietario.
+
+
+COMPONENTES DE TERCEROS
+--------------------------------------------------------------------------------
+
+ArqueoCAD incorpora las siguientes bibliotecas, cuyos textos de licencia están
+en la carpeta licencias/terceros:
+
+    ezdxf .............. MIT       lectura y escritura de DXF
+    svgelements ........ MIT       análisis de SVG
+    pyparsing .......... MIT       requerido por ezdxf
+    fonttools .......... MIT       requerido por la composición de textos
+    NumPy .............. BSD-3     cálculo numérico
+    PySide6 / Qt 6 ..... LGPL-3.0  interfaz gráfica
+
+Esta aplicación usa Qt 6 a través de PySide6 bajo la LGPL-3.0. Conforme a sus
+términos, quien reciba el programa tiene derecho a sustituir las bibliotecas de
+Qt por otra versión; se distribuyen como archivos independientes dentro de la
+carpeta de la aplicación, de modo que pueden reemplazarse directamente. Su
+código fuente está en https://download.qt.io/official_releases/QtForPython/
+
+Los detalles completos están en licencias/LEEME.txt.
+
+
+ARCHIVOS DWG
+--------------------------------------------------------------------------------
+
+ArqueoCAD NO incorpora ningún componente de lectura de DWG, porque es un formato
+propietario y cerrado. Los archivos DWG se convierten invocando un programa
+externo que instala el propio usuario, habitualmente ODA File Converter, que se
+distribuye por separado bajo sus propias condiciones y no forma parte de esta
+aplicación.
+
+
+MARCAS REGISTRADAS
+--------------------------------------------------------------------------------
+
+AutoCAD, DWG y DXF son marcas registradas de Autodesk, Inc. Inkscape es marca
+registrada de Software Freedom Conservancy. Se mencionan únicamente para
+describir la compatibilidad de formatos. ArqueoCAD no está afiliado a Autodesk
+ni cuenta con su respaldo o patrocinio.

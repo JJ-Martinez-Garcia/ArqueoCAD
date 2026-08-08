@@ -1,0 +1,30 @@
+# Entorno de desarrollo
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Resultados del empaquetado
+build/
+dist/
+*.spec.bak
+
+# Icono generado: se rehace con tools/crear_icono.py
+packaging/arqueocad.ico
+packaging/arqueocad.png
+packaging/_icono_*.png
+
+# Salidas de las pruebas manuales
+tests/captura*.png
+tests/plano_prueba.dxf
+
+# Binarios de terceros que no se versionan
+vendor/
+
+# Configuración local de las herramientas de desarrollo
+.claude/
+.vscode/
+.idea/
+
+# Borrador de la página de descarga: material de trabajo, no del programa
+TEXTO-PARA-LA-WEB.md

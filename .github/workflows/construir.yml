@@ -1,0 +1,142 @@
+name: Construir instaladores
+
+# Desde Windows no pueden generarse el .dmg de macOS ni el AppImage de Linux:
+# PyInstaller solo produce ejecutables para el sistema en el que corre. Estas
+# máquinas dan los tres.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  pruebas:
+    name: Pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pytest
+      - name: Ejecutar las pruebas
+        # Sin pantalla en el servidor; Qt necesita saberlo.
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: pytest tests -q
+
+  construir:
+    name: ${{ matrix.nombre }}
+    needs: pruebas
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - sistema: windows-latest
+            nombre: Windows
+            artefacto: ArqueoCAD-windows-x64
+          - sistema: macos-latest
+            nombre: macOS
+            artefacto: ArqueoCAD-macos
+          - sistema: ubuntu-22.04
+            nombre: Linux
+            artefacto: ArqueoCAD-linux-x64
+    runs-on: ${{ matrix.sistema }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller pillow
+
+      - name: Generar el icono
+        run: python tools/crear_icono.py
+
+      - name: Empaquetar
+        run: python -m PyInstaller packaging/arqueocad.spec --noconfirm
+
+      - name: Comprobar que el ejecutable arranca (Windows)
+        if: runner.os == 'Windows'
+        run: dist\ArqueoCAD\ArqueoCAD.exe --comprobar
+
+      - name: Comprobar que el ejecutable arranca (macOS)
+        if: runner.os == 'macOS'
+        run: dist/ArqueoCAD/ArqueoCAD --comprobar
+
+      - name: Comprobar que el ejecutable arranca (Linux)
+        if: runner.os == 'Linux'
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libxkbcommon-x11-0 libxcb-cursor0
+          dist/ArqueoCAD/ArqueoCAD --comprobar
+
+      - name: Construir el instalador de Windows
+        if: runner.os == 'Windows'
+        run: |
+          iscc packaging\instalador.iss
+        shell: cmd
+
+      - name: Empaquetar la versión portable (Windows)
+        if: runner.os == 'Windows'
+        run: Compress-Archive -Path dist\ArqueoCAD\* -DestinationPath dist\ArqueoCAD-portable-windows-x64.zip
+
+      - name: Construir el .dmg de macOS
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p dist/dmg
+          cp -R dist/ArqueoCAD.app dist/dmg/
+          ln -s /Applications dist/dmg/Applications
+          hdiutil create -volname ArqueoCAD -srcfolder dist/dmg \
+            -ov -format UDZO dist/ArqueoCAD-macos.dmg
+
+      - name: Empaquetar Linux
+        if: runner.os == 'Linux'
+        run: tar -czf dist/ArqueoCAD-linux-x64.tar.gz -C dist ArqueoCAD
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artefacto }}
+          path: |
+            dist/*.exe
+            dist/*.zip
+            dist/*.dmg
+            dist/*.tar.gz
+          if-no-files-found: error
+
+  publicar:
+    name: Publicar la versión
+    needs: construir
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artefactos
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artefactos/**/*
+          draft: true
+          body: |
+            Instaladores de ArqueoCAD.
+
+            **Windows** — instalador `.exe` o versión portable `.zip`.
+            **macOS** — `.dmg`. Sin notarizar: la primera vez hay que abrirlo
+            con el botón derecho › Abrir.
+            **Linux** — `.tar.gz`; se descomprime y se ejecuta `ArqueoCAD`.
+
+            Para abrir archivos DWG hace falta
+            [ODA File Converter](https://www.opendesign.com/guestfiles/oda_file_converter),
+            que es gratuito. Los DXF y los SVG se abren sin nada más.
