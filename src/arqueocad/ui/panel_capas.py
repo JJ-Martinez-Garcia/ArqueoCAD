@@ -41,6 +41,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from ..core.idioma import t
 from ..core.modelo import Documento
 
 #: Rol donde se guarda el nombre real de la capa, que no siempre coincide con
@@ -65,7 +66,7 @@ class PanelCapas(QWidget):
         disposicion.setSpacing(6)
 
         self._filtro = QLineEdit()
-        self._filtro.setPlaceholderText("Filtrar capas…  (p. ej. UE-1)")
+        self._filtro.setPlaceholderText(t("Filtrar capas…  (p. ej. UE-1)"))
         self._filtro.setClearButtonEnabled(True)
         self._filtro.textChanged.connect(self._aplicar_filtro)
         disposicion.addWidget(self._filtro)
@@ -74,7 +75,7 @@ class PanelCapas(QWidget):
 
         self._arbol = QTreeWidget()
         self._arbol.setColumnCount(2)
-        self._arbol.setHeaderLabels(["Capa", "Entidades"])
+        self._arbol.setHeaderLabels([t("Capa"), t("Entidades")])
         self._arbol.setRootIsDecorated(False)
         self._arbol.setAlternatingRowColors(True)
         self._arbol.setUniformRowHeights(True)
@@ -92,7 +93,7 @@ class PanelCapas(QWidget):
         self._arbol.itemDoubleClicked.connect(self._al_doble_clic)
         disposicion.addWidget(self._arbol, stretch=1)
 
-        self._resumen = QLabel("Sin plano cargado")
+        self._resumen = QLabel(t("Sin plano cargado"))
         self._resumen.setWordWrap(True)
         disposicion.addWidget(self._resumen)
 
@@ -100,10 +101,10 @@ class PanelCapas(QWidget):
         fila = QHBoxLayout()
         fila.setSpacing(4)
         for texto, ayuda, accion in (
-            ("Todas", "Mostrar y seleccionar todas las capas", self.seleccionar_todas),
-            ("Ninguna", "Ocultar y deseleccionar todas", self.seleccionar_ninguna),
-            ("Invertir", "Invertir la selección actual", self.invertir_seleccion),
-            ("Solo esta", "Dejar visible únicamente la capa activa", self.aislar),
+            (t("Todas"), t("Mostrar y seleccionar todas las capas"), self.seleccionar_todas),
+            (t("Ninguna"), t("Ocultar y deseleccionar todas"), self.seleccionar_ninguna),
+            (t("Invertir"), t("Invertir la selección actual"), self.invertir_seleccion),
+            (t("Solo esta"), t("Dejar visible únicamente la capa activa"), self.aislar),
         ):
             boton = QToolButton()
             boton.setText(texto)
@@ -121,7 +122,7 @@ class PanelCapas(QWidget):
         self._arbol.clear()
 
         if documento is None:
-            self._resumen.setText("Sin plano cargado")
+            self._resumen.setText(t("Sin plano cargado"))
             self._bloqueado = False
             return
 
@@ -137,16 +138,23 @@ class PanelCapas(QWidget):
             )
             item.setTextAlignment(1, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
 
-            detalle = [f"Color ACI {capa.aci}", f"Tipo de línea: {capa.tipo_linea}"]
+            detalle = [
+                t("Color ACI {n}").format(n=capa.aci),
+                t("Tipo de línea: {tipo}").format(tipo=capa.tipo_linea),
+            ]
             if capa.tipos_presentes:
-                detalle.append("Contiene: " + ", ".join(sorted(capa.tipos_presentes)))
+                detalle.append(
+                    t("Contiene: {tipos}").format(
+                        tipos=", ".join(sorted(capa.tipos_presentes))
+                    )
+                )
             if capa.auxiliar:
                 detalle.append(
-                    "Capa auxiliar del programa de CAD: queda fuera de la exportación."
+                    t("Capa auxiliar del programa de CAD: queda fuera de la exportación.")
                 )
                 item.setForeground(0, QColor(150, 150, 150))
             if capa.n_entidades == 0:
-                detalle.append("Capa vacía.")
+                detalle.append(t("Capa vacía."))
             item.setToolTip(0, "\n".join(detalle))
 
             self._arbol.addTopLevelItem(item)
@@ -281,9 +289,15 @@ class PanelCapas(QWidget):
             self._documento.capas[n].n_entidades for n in self.capas_seleccionadas()
         )
         self._resumen.setText(
-            f"{total} capas · {visibles} visibles · "
-            f"{seleccionadas} seleccionadas para exportar "
-            f"({entidades:,} entidades)".replace(",", ".")
+            t(
+                "{total} capas · {visibles} visibles · "
+                "{sel} seleccionadas para exportar ({ent} entidades)"
+            ).format(
+                total=total,
+                visibles=visibles,
+                sel=seleccionadas,
+                ent=f"{entidades:,}".replace(",", "."),
+            )
         )
 
 

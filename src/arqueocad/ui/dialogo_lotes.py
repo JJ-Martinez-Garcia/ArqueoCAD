@@ -44,14 +44,17 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from ..core.idioma import t
 from ..core.lotes import OpcionesLote, ResultadoLote, procesar_lote
 from ..core.separador import Formato, Modo, Opciones
 from ..io import EXTENSIONES
 
-FILTRO = (
-    "Planos admitidos (*.dxf *.dwg *.svg);;"
-    "AutoCAD DXF (*.dxf);;AutoCAD DWG (*.dwg);;SVG (*.svg)"
-)
+def _filtro() -> str:
+    """Filtro del diálogo de apertura, en el idioma activo."""
+    return (
+        f"{t('Planos admitidos (*.dxf *.dwg *.svg)')};;"
+        "AutoCAD DXF (*.dxf);;AutoCAD DWG (*.dwg);;SVG (*.svg)"
+    )
 
 ESCALAS = (1, 10, 20, 25, 50, 100, 200, 500)
 
@@ -88,7 +91,7 @@ class _Trabajador(QObject):
 class DialogoLotes(QDialog):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Separar por lotes")
+        self.setWindowTitle(t("Separar por lotes"))
         self.setMinimumWidth(640)
         self.setAcceptDrops(True)
 
@@ -111,9 +114,9 @@ class DialogoLotes(QDialog):
 
         botones = QDialogButtonBox()
         self._boton_procesar = botones.addButton(
-            "Procesar", QDialogButtonBox.ButtonRole.AcceptRole
+            t("Procesar"), QDialogButtonBox.ButtonRole.AcceptRole
         )
-        cerrar = botones.addButton("Cerrar", QDialogButtonBox.ButtonRole.RejectRole)
+        cerrar = botones.addButton(t("Cerrar"), QDialogButtonBox.ButtonRole.RejectRole)
         self._boton_procesar.clicked.connect(self._procesar)
         cerrar.clicked.connect(self.reject)
         disposicion.addWidget(botones)
@@ -123,7 +126,7 @@ class DialogoLotes(QDialog):
     # -- construcción ----------------------------------------------------
 
     def _grupo_planos(self) -> QGroupBox:
-        grupo = QGroupBox("Planos")
+        grupo = QGroupBox(t("Planos"))
         disposicion = QVBoxLayout(grupo)
 
         self._lista = QListWidget()
@@ -137,10 +140,10 @@ class DialogoLotes(QDialog):
 
         fila = QHBoxLayout()
         for texto, accion in (
-            ("Añadir planos…", self._anadir_archivos),
-            ("Añadir una carpeta…", self._anadir_carpeta),
-            ("Quitar", self._quitar),
-            ("Vaciar", self._lista.clear),
+            (t("Añadir planos…"), self._anadir_archivos),
+            (t("Añadir una carpeta…"), self._anadir_carpeta),
+            (t("Quitar"), self._quitar),
+            (t("Vaciar"), self._lista.clear),
         ):
             boton = QPushButton(texto)
             boton.clicked.connect(accion)
@@ -148,26 +151,28 @@ class DialogoLotes(QDialog):
         fila.addStretch(1)
         disposicion.addLayout(fila)
 
-        ayuda = QLabel("También pueden arrastrarse archivos sobre esta ventana.")
+        ayuda = QLabel(t("También pueden arrastrarse archivos sobre esta ventana."))
         disposicion.addWidget(ayuda)
 
         return grupo
 
     def _grupo_capas(self) -> QGroupBox:
-        grupo = QGroupBox("Qué capas se exportan")
+        grupo = QGroupBox(t("Qué capas se exportan"))
         disposicion = QFormLayout(grupo)
 
         self._patrones = QLineEdit()
-        self._patrones.setPlaceholderText("todas las capas")
+        self._patrones.setPlaceholderText(t("todas las capas"))
         self._patrones.setToolTip(
             "Patrones separados por comas, con comodines.\n"
             "Ejemplos:  UE-*    *_2024    MURO*, SARCÓFAGO*"
         )
-        disposicion.addRow("Patrones:", self._patrones)
+        disposicion.addRow(t("Patrones:"), self._patrones)
 
         ayuda = QLabel(
-            "Se admiten comodines y varios patrones separados por comas. "
-            "En blanco, se exportan todas las capas de cada plano."
+            t(
+                "Se admiten comodines y varios patrones separados por comas. "
+                "En blanco, se exportan todas las capas de cada plano."
+            )
         )
         ayuda.setWordWrap(True)
         disposicion.addRow(ayuda)
@@ -175,7 +180,7 @@ class DialogoLotes(QDialog):
         return grupo
 
     def _grupo_salida(self) -> QGroupBox:
-        grupo = QGroupBox("Salida")
+        grupo = QGroupBox(t("Salida"))
         disposicion = QFormLayout(grupo)
 
         fila = QHBoxLayout()
@@ -184,7 +189,7 @@ class DialogoLotes(QDialog):
         boton.clicked.connect(self._elegir_carpeta)
         fila.addWidget(self._carpeta)
         fila.addWidget(boton)
-        disposicion.addRow("Carpeta:", fila)
+        disposicion.addRow(t("Carpeta:"), fila)
 
         formatos = QHBoxLayout()
         self._dxf = QCheckBox("DXF")
@@ -195,24 +200,24 @@ class DialogoLotes(QDialog):
         formatos.addWidget(self._dxf)
         formatos.addWidget(self._svg)
         formatos.addStretch(1)
-        disposicion.addRow("Formatos:", formatos)
+        disposicion.addRow(t("Formatos:"), formatos)
 
         self._escala = QComboBox()
         for denominador in ESCALAS:
             self._escala.addItem(
-                "Tamaño real (1:1)" if denominador == 1 else f"1:{denominador}",
+                t("Tamaño real (1:1)") if denominador == 1 else f"1:{denominador}",
                 denominador,
             )
         self._escala.setCurrentIndex(ESCALAS.index(50))
-        disposicion.addRow("Escala del SVG:", self._escala)
+        disposicion.addRow(t("Escala del SVG:"), self._escala)
         self._fila_escala = disposicion.rowCount() - 1
         self._formulario = disposicion
 
-        self._subcarpetas = QCheckBox("Una subcarpeta por plano")
+        self._subcarpetas = QCheckBox(t("Una subcarpeta por plano"))
         self._subcarpetas.setChecked(True)
         disposicion.addRow(self._subcarpetas)
 
-        self._explotar = QCheckBox("Desplegar los bloques")
+        self._explotar = QCheckBox(t("Desplegar los bloques"))
         disposicion.addRow(self._explotar)
 
         return grupo
@@ -220,11 +225,11 @@ class DialogoLotes(QDialog):
     # -- planos ----------------------------------------------------------
 
     def _anadir_archivos(self) -> None:
-        rutas, _ = QFileDialog.getOpenFileNames(self, "Añadir planos", "", FILTRO)
+        rutas, _ = QFileDialog.getOpenFileNames(self, t("Añadir planos"), "", _filtro())
         self._anadir(Path(r) for r in rutas)
 
     def _anadir_carpeta(self) -> None:
-        carpeta = QFileDialog.getExistingDirectory(self, "Añadir una carpeta")
+        carpeta = QFileDialog.getExistingDirectory(self, t("Añadir una carpeta"))
         if not carpeta:
             return
         encontrados = [
@@ -234,7 +239,7 @@ class DialogoLotes(QDialog):
         if not encontrados:
             self._informe.show()
             self._informe.addItem(
-                QListWidgetItem(f"▲  No hay planos admitidos en {carpeta}")
+                QListWidgetItem("▲  " + t("No hay planos admitidos en {carpeta}").format(carpeta=carpeta))
             )
             return
         self._anadir(encontrados)
@@ -259,7 +264,7 @@ class DialogoLotes(QDialog):
 
     def _elegir_carpeta(self) -> None:
         carpeta = QFileDialog.getExistingDirectory(
-            self, "Carpeta de destino", self._carpeta.text()
+            self, t("Carpeta de destino"), self._carpeta.text()
         )
         if carpeta:
             self._carpeta.setText(carpeta)

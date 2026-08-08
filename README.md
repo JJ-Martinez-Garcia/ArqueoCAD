@@ -20,6 +20,7 @@ Pensado para planimetría de excavación.
   (`UE-*`, `*_2024`).
 - Mide distancias, superficies y acimut sobre el plano.
 - Exporta a la escala de publicación que se indique (1:20, 1:50, 1:100…).
+- Interfaz en **español e inglés**, conmutable desde `Ver › Idioma`.
 
 ## Criterios de diseño
 

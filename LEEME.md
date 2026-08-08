@@ -238,6 +238,28 @@ este—, que es la que interesa para orientar un muro. Si el plano no declara su
 unidades, las medidas se dan en unidades de dibujo y así se indica: presentar
 «12,4 m» sobre un plano de escala desconocida sería inventar un dato.
 
+## Idiomas
+
+La interfaz está en **español e inglés**, y se cambia en `Ver › Idioma`. La
+elección se recuerda entre sesiones; en el primer arranque se adopta la del
+sistema, para que un usuario anglófono no se encuentre una interfaz en español
+sin saber dónde cambiarla.
+
+El catálogo está en `core/idioma.py` y usa **el propio texto español como
+clave**, en lugar de identificadores del tipo `menu.archivo.abrir`. Tiene dos
+ventajas que pesan más que la elegancia de un sistema de claves: el código sigue
+siendo legible sin consultar el catálogo, y un texto sin traducir aparece en
+español en vez de mostrar la clave en crudo.
+
+Las cadenas con datos se escriben como plantillas y se formatean **después** de
+traducir, porque el orden de las palabras cambia entre idiomas. Una prueba
+comprueba que los huecos `{…}` coinciden entre original y traducción: es el
+fallo más fácil de colar y el más molesto de detectar, porque solo revienta
+cuando el usuario abre esa ventana concreta.
+
+Cambiar de idioma **reconstruye la ventana**, conservando el plano ya leído: los
+textos se fijan al crear cada widget, así que no basta con retraducirlos.
+
 ## Empaquetado
 
 ```bash

@@ -113,21 +113,27 @@ class Medicion:
 
     def resumen(self) -> str:
         """Línea de estado con lo que procede según los puntos marcados."""
+        from .idioma import t
+
         if not self.puntos:
-            return "Medición: marque el primer punto"
+            return t("Medición: marque el primer punto")
 
         if len(self.puntos) == 1:
-            return "Medición: marque el segundo punto"
+            return t("Medición: marque el segundo punto")
 
-        partes = [f"Longitud: {self.texto_longitud()}"]
+        partes = [t("Longitud: {valor}").format(valor=self.texto_longitud())]
 
         acimut = self.acimut
         if acimut is not None:
-            partes.append(f"Acimut: {acimut:.1f}°")
+            partes.append(t("Acimut: {valor}°").format(valor=f"{acimut:.1f}"))
 
         if len(self.puntos) >= 3:
-            partes.append(f"Área: {self.texto_area()}")
-            partes.append(f"Perímetro: {_formatear(self.perimetro, self.unidad)}")
+            partes.append(t("Área: {valor}").format(valor=self.texto_area()))
+            partes.append(
+                t("Perímetro: {valor}").format(
+                    valor=_formatear(self.perimetro, self.unidad)
+                )
+            )
 
         return "   ·   ".join(partes)
 

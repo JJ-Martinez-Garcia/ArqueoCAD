@@ -45,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     # Fusion se ve igual en Windows, macOS y Linux, lo que evita que la
     # aplicación cambie de aspecto según el sistema y facilita el soporte.
     aplicacion.setStyle("Fusion")
+    _aplicar_idioma()
     icono = _icono()
     if icono is not None:
         aplicacion.setWindowIcon(icono)
@@ -62,6 +63,20 @@ def main(argv: list[str] | None = None) -> int:
             ventana.abrir(ruta)
 
     return aplicacion.exec()
+
+
+def _aplicar_idioma() -> None:
+    """Fija el idioma guardado, o el del sistema la primera vez.
+
+    Que la primera ejecución hable la lengua del sistema evita que un usuario
+    anglófono se encuentre una interfaz en español sin saber dónde cambiarla.
+    """
+    from PySide6.QtCore import QSettings
+
+    from .core.idioma import IDIOMAS, detectar_del_sistema, fijar_idioma
+
+    guardado = QSettings("ArqueoCAD", "ArqueoCAD").value("idioma", "")
+    fijar_idioma(guardado if guardado in IDIOMAS else detectar_del_sistema())
 
 
 def _icono():
@@ -97,6 +112,7 @@ def _comprobar(argv: list[str]) -> int:
 
     aplicacion = QApplication([argv[0]])
     aplicacion.setStyle("Fusion")
+    _aplicar_idioma()
     icono = _icono()
     if icono is not None:
         aplicacion.setWindowIcon(icono)

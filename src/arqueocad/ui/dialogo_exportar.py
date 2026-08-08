@@ -40,6 +40,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from ..core.idioma import t
 from ..core.modelo import Documento
 from ..core.separador import Formato, Modo, Opciones, Resultado, separar
 from ..core.unidades import Unidad
@@ -93,7 +94,7 @@ class DialogoExportar(QDialog):
         self, documento: Documento, capas: list[str], parent: QWidget | None = None
     ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Separar por capas")
+        self.setWindowTitle(t("Separar por capas"))
         self.setMinimumWidth(560)
 
         self._documento = documento
@@ -122,9 +123,9 @@ class DialogoExportar(QDialog):
         # del sistema, que no tiene por qué ser el de la aplicación.
         self._botones = QDialogButtonBox()
         self._boton_exportar = self._botones.addButton(
-            "Separar", QDialogButtonBox.ButtonRole.AcceptRole
+            t("Separar"), QDialogButtonBox.ButtonRole.AcceptRole
         )
-        cerrar = self._botones.addButton("Cerrar", QDialogButtonBox.ButtonRole.RejectRole)
+        cerrar = self._botones.addButton(t("Cerrar"), QDialogButtonBox.ButtonRole.RejectRole)
         self._boton_exportar.clicked.connect(self._exportar)
         cerrar.clicked.connect(self.reject)
         disposicion.addWidget(self._botones)
@@ -140,19 +141,21 @@ class DialogoExportar(QDialog):
             if c in self._documento.capas
         )
         etiqueta = QLabel(
-            f"<b>{len(self._capas)} capas seleccionadas</b> · {entidades:,} entidades".replace(",", ".")
+            t("<b>{n} capas seleccionadas</b> · {ent} entidades").format(
+                n=len(self._capas), ent=f"{entidades:,}".replace(",", ".")
+            )
         )
         etiqueta.setWordWrap(True)
         return etiqueta
 
     def _grupo_modo(self) -> QGroupBox:
-        grupo = QGroupBox("Cómo se reparte")
+        grupo = QGroupBox(t("Cómo se reparte"))
         disposicion = QVBoxLayout(grupo)
 
         self._modo = QButtonGroup(self)
         opciones = (
-            (Modo.POR_CAPA, "Un archivo por capa", "Genera tantos archivos como capas seleccionadas."),
-            (Modo.UNICO, "Un solo archivo con todas las capas", "Filtra el plano conservando su estructura."),
+            (Modo.POR_CAPA, t("Un archivo por capa"), t("Genera tantos archivos como capas seleccionadas.")),
+            (Modo.UNICO, t("Un solo archivo con todas las capas"), t("Filtra el plano conservando su estructura.")),
         )
         for indice, (modo, titulo, ayuda) in enumerate(opciones):
             boton = QRadioButton(titulo)
@@ -165,15 +168,15 @@ class DialogoExportar(QDialog):
         return grupo
 
     def _grupo_formato(self) -> QGroupBox:
-        grupo = QGroupBox("Formato de salida")
+        grupo = QGroupBox(t("Formato de salida"))
         disposicion = QVBoxLayout(grupo)
 
-        self._dxf = QCheckBox("DXF — para seguir trabajando en CAD")
+        self._dxf = QCheckBox(t("DXF — para seguir trabajando en CAD"))
         self._dxf.setChecked(True)
         self._dxf.toggled.connect(self._actualizar_disponibilidad)
         disposicion.addWidget(self._dxf)
 
-        self._svg = QCheckBox("SVG — con capas de Inkscape, para la figura de publicación")
+        self._svg = QCheckBox(t("SVG — con capas de Inkscape, para la figura de publicación"))
         self._svg.toggled.connect(self._actualizar_disponibilidad)
         disposicion.addWidget(self._svg)
 
@@ -181,19 +184,19 @@ class DialogoExportar(QDialog):
         self._escala = QComboBox()
         for denominador in ESCALAS:
             self._escala.addItem(
-                "Tamaño real (1:1)" if denominador == 1 else f"1:{denominador}", denominador
+                t("Tamaño real (1:1)") if denominador == 1 else f"1:{denominador}", denominador
             )
         self._escala.setCurrentIndex(ESCALAS.index(50))
-        self._formulario.addRow("Escala del SVG:", self._escala)
+        self._formulario.addRow(t("Escala del SVG:"), self._escala)
 
         self._unidad = QComboBox()
         for unidad in UNIDADES_HABITUALES:
-            self._unidad.addItem(nombre_unidad(unidad), unidad)
-        self._formulario.addRow("Unidad del plano:", self._unidad)
+            self._unidad.addItem(t(nombre_unidad(unidad)), unidad)
+        self._formulario.addRow(t("Unidad del plano:"), self._unidad)
         self._fila_unidad = self._formulario.rowCount() - 1
 
         self._aviso_unidad = QLabel(
-            "El plano no declara sus unidades; hay que indicarlas para conservar la escala."
+            t("El plano no declara sus unidades; hay que indicarlas para conservar la escala.")
         )
         self._aviso_unidad.setWordWrap(True)
         self._formulario.addRow(self._aviso_unidad)
@@ -203,40 +206,42 @@ class DialogoExportar(QDialog):
         return grupo
 
     def _grupo_destino(self) -> QGroupBox:
-        grupo = QGroupBox("Destino")
+        grupo = QGroupBox(t("Destino"))
         disposicion = QFormLayout(grupo)
 
         origen = Path(self._documento.ruta)
         fila = QHBoxLayout()
         self._carpeta = QLineEdit(str(origen.parent / f"{origen.stem}_capas"))
-        boton = QPushButton("Examinar…")
+        boton = QPushButton(t("Examinar…"))
         boton.clicked.connect(self._elegir_carpeta)
         fila.addWidget(self._carpeta)
         fila.addWidget(boton)
-        disposicion.addRow("Carpeta:", fila)
+        disposicion.addRow(t("Carpeta:"), fila)
 
         self._prefijo = QLineEdit(origen.stem)
-        disposicion.addRow("Prefijo:", self._prefijo)
+        disposicion.addRow(t("Prefijo:"), self._prefijo)
 
         return grupo
 
     def _grupo_opciones(self) -> QGroupBox:
-        grupo = QGroupBox("Opciones")
+        grupo = QGroupBox(t("Opciones"))
         disposicion = QVBoxLayout(grupo)
 
-        self._explotar = QCheckBox("Desplegar los bloques para repartir su geometría por capas")
+        self._explotar = QCheckBox(t("Desplegar los bloques para repartir su geometría por capas"))
         self._explotar.setToolTip(
-            "Sin desplegar, un bloque insertado en una capa viaja entero con ella, "
-            "aunque su interior pertenezca a otras capas."
+            t(
+                "Sin desplegar, un bloque insertado en una capa viaja entero con ella, "
+                "aunque su interior pertenezca a otras capas."
+            )
         )
         disposicion.addWidget(self._explotar)
 
-        self._omitir_vacias = QCheckBox("Omitir las capas sin entidades")
+        self._omitir_vacias = QCheckBox(t("Omitir las capas sin entidades"))
         self._omitir_vacias.setChecked(True)
         disposicion.addWidget(self._omitir_vacias)
 
         self._incluir_auxiliares = QCheckBox(
-            "Incluir las capas auxiliares del programa de CAD («Defpoints» y las no imprimibles)"
+            t("Incluir las capas auxiliares del programa de CAD («Defpoints» y las no imprimibles)")
         )
         disposicion.addWidget(self._incluir_auxiliares)
 
@@ -246,7 +251,7 @@ class DialogoExportar(QDialog):
 
     def _elegir_carpeta(self) -> None:
         carpeta = QFileDialog.getExistingDirectory(
-            self, "Carpeta de destino", self._carpeta.text()
+            self, t("Carpeta de destino"), self._carpeta.text()
         )
         if carpeta:
             self._carpeta.setText(carpeta)
@@ -339,7 +344,9 @@ class DialogoExportar(QDialog):
 
         self._informe.addItem(
             QListWidgetItem(
-                f"✔  {resultado.total_archivos} archivos generados en {carpeta}"
+                "✔  " + t("{n} archivos generados en {carpeta}").format(
+                    n=resultado.total_archivos, carpeta=carpeta
+                )
             )
         )
         for archivo in resultado.archivos:
