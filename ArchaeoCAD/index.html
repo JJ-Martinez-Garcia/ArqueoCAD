@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#11191b">
+  <meta name="description" content="ArchaeoCAD Mobile: visor y vectorizador de planos arqueológicos.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="https://archaeocad.jjmartinezgarcia.chatgpt.site/favicon.svg">
+  <title>ArchaeoCAD Mobile</title>
+  <style>
+    html,body{margin:0;height:100%;background:#11191b;color:#ece8dd;font:16px system-ui,sans-serif}
+    main{min-height:100%;display:grid;place-items:center;text-align:center;padding:2rem;box-sizing:border-box}
+    a{color:#f0c266}
+    .card{max-width:36rem;padding:2rem;border:1px solid #405050;background:#172224}
+    .button{display:inline-block;margin-top:1rem;padding:.8rem 1.2rem;background:#f0c266;color:#171714;text-decoration:none;font-weight:700}
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>ArchaeoCAD Mobile</h1>
+      <p>Visor, editor y vectorizador de planos arqueológicos.</p>
+      <p>Abriendo la aplicación…</p>
+      <a class="button" href="https://archaeocad.jjmartinezgarcia.chatgpt.site/">Abrir ArchaeoCAD</a>
+    </section>
+  </main>
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
+    window.setTimeout(() => window.location.replace("https://archaeocad.jjmartinezgarcia.chatgpt.site/"), 250);
+  </script>
+</body>
+</html>
