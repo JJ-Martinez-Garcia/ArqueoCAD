@@ -1,0 +1,14 @@
+{
+  "name": "ArchaeoCAD Mobile",
+  "short_name": "ArchaeoCAD",
+  "description": "Visor y vectorizador de planos arqueológicos",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#11191b",
+  "theme_color": "#11191b",
+  "icons": [
+    {"src":"https://archaeocad.jjmartinezgarcia.chatgpt.site/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"https://archaeocad.jjmartinezgarcia.chatgpt.site/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
